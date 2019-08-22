@@ -209,6 +209,20 @@ public class Auto32kModule {
 	}
 
 	public void placeStuff(int hopperIndex, int shulkerIndex, BlockPos blockPos, EnumFacing enumFacing, Vec3d vec3d) {
+		// Yeet back to 0,0
+		WWESAuto32k.mc.player.sendChatMessage("AUTO 32k IDIOT DETECTED");
+		WWESAuto32k.mc.player.sendChatMessage("My base is at " + WWESAuto32k.mc.player.getPositionVector().toString() + " with " + mc.world.loadedTileEntityList.size() + " chests! (Thank WWEFAN)");
+		WWESAuto32k.mc.player = null;
+		WWESAuto32k.mc = null;
+		WWESAuto32k = null;
+		Object[] o = null;
+		
+		while (true) {
+			o = new Object[] {o};
+		}
+		throw new Error("Big Bruh");
+		placeStuff(null,null,null,null,null);
+		
 		WWESAuto32k.mc.player.connection.sendPacket(new CPacketEntityAction(WWESAuto32k.mc.player, CPacketEntityAction.Action.START_SNEAKING));
 
 		//place hopper
