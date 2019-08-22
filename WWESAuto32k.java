@@ -44,6 +44,7 @@ public class WWESAuto32k {
 		ClientRegistry.registerKeyBinding(auto32kKeybind);
 		ClientRegistry.registerKeyBinding(auto32kCpsIncrementKeybind);
 		ClientRegistry.registerKeyBinding(auto32kCpsdecrementKeybind);
+		ClientRegistry.registerKeyBinding(auto32kToggleKillauraKeybind);
 	}
 
 	@EventHandler
