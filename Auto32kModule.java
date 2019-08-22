@@ -3,7 +3,6 @@ package me.THEREALWWEFAN231.auto32k;
 import com.google.common.base.Predicate;
 
 import net.minecraft.block.BlockAir;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -36,7 +35,6 @@ public class Auto32kModule {
 	public boolean hasPlacedStuff;
 	public EntityPlayer entityPlayer;
 	public int cpsTick;//i guess ill do it this way, not with system time
-	public Minecraft mc = Minecraft.getMinecraft();
 
 	@SubscribeEvent
 	public void onRenderGui(RenderGameOverlayEvent.Post event) {
@@ -44,10 +42,10 @@ public class Auto32kModule {
 			return;
 		}
 
+		WWESAuto32k.mc.fontRenderer.drawStringWithShadow("WWE's Auto 32k " + (WWESAuto32k.is32kEnabled ? "Enabled" : "Disabled") + "[" + WWESAuto32k.cps + "]", 2, event.getResolution().getScaledHeight() - 10, 0xd1ff0000);
 		if (WWESAuto32k.is32kEnabled) {
-			mc.fontRenderer.drawStringWithShadow("WWE's Auto 32k Enabled[" + WWESAuto32k.cps + "]", 2, event.getResolution().getScaledHeight() - 10, 0xd1ff0000);
+			WWESAuto32k.mc.fontRenderer.drawStringWithShadow("Kill Aura [" + WWESAuto32k.isKillauraOptionEnabled + "]", 2, event.getResolution().getScaledHeight() - 20, 0xd1ff0000);
 		}
-
 	}
 
 	@SubscribeEvent
@@ -62,10 +60,17 @@ public class Auto32kModule {
 
 		if (WWESAuto32k.auto32kCpsIncrementKeybind.isPressed()) {
 			WWESAuto32k.cps++;
+			WWESAuto32k.saveInformation();
 		}
 
 		if (WWESAuto32k.auto32kCpsdecrementKeybind.isPressed()) {
 			WWESAuto32k.cps--;
+			WWESAuto32k.saveInformation();
+		}
+
+		if (WWESAuto32k.auto32kToggleKillauraKeybind.isPressed()) {
+			WWESAuto32k.isKillauraOptionEnabled = !WWESAuto32k.isKillauraOptionEnabled;
+			WWESAuto32k.saveInformation();
 		}
 
 		if (!WWESAuto32k.is32kEnabled) {
@@ -77,7 +82,7 @@ public class Auto32kModule {
 		int enchantedSwordIndex = -1;
 
 		for (int i = 0; i < 9; i++) {
-			ItemStack itemStack = mc.player.inventory.mainInventory.get(i);
+			ItemStack itemStack = WWESAuto32k.mc.player.inventory.mainInventory.get(i);
 			if (itemStack.getItem().equals(Item.getItemFromBlock(Blocks.HOPPER))) {
 				hopperIndex = i;
 			}
@@ -95,15 +100,14 @@ public class Auto32kModule {
 			return;
 		}
 
-		/* if (enchantedSwordIndex == -1 &&
-		 * mc.objectMouseOver != null &&
-		 * mc.objectMouseOver.getBlockPos() != null &&
-		 * !(mc.world.getBlockState(Minecraft.getMinecraft
+		/* if (enchantedSwordIndex == -1 && WWESAuto32k.mc.objectMouseOver !=
+		 * null && WWESAuto32k.mc.objectMouseOver.getBlockPos() != null &&
+		 * !(WWESAuto32k.mc.world.getBlockState(Minecraft.getMinecraft
 		 * ().objectMouseOver. getBlockPos()).getBlock() instanceof BlockAir) &&
 		 * !hasPlacedStuff) { this.placeStuff(hopperIndex, shulkerIndex,
-		 * mc.objectMouseOver.getBlockPos(),
-		 * mc.objectMouseOver.sideHit,
-		 * mc.objectMouseOver.hitVec); } else */ if (enchantedSwordIndex == -1 && !hasPlacedStuff) {
+		 * WWESAuto32k.mc.objectMouseOver.getBlockPos(),
+		 * WWESAuto32k.mc.objectMouseOver.sideHit,
+		 * WWESAuto32k.mc.objectMouseOver.hitVec); } else */ if (enchantedSwordIndex == -1 && !hasPlacedStuff) {
 
 			double closestBlockPosDistance = 4;//maybe?
 			BlockPos closestBlockPos = null;
@@ -114,9 +118,9 @@ public class Auto32kModule {
 				}
 			};
 
-			for (BlockPos blockPos : BlockPos.getAllInBox(new BlockPos(mc.player.posX - 3, mc.player.posY - 1, mc.player.posZ - 3), new BlockPos(mc.player.posX + 3, mc.player.posY + 2, mc.player.posZ + 3))) {
-				if (mc.player.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ()) < closestBlockPosDistance && mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(blockPos.add(0, 1, 0)), predicate).isEmpty() && !(mc.world.getBlockState(blockPos.down()).getBlock() instanceof BlockAir) && mc.world.getBlockState(blockPos).getBlock() instanceof BlockAir && mc.world.getBlockState(blockPos.up()).getBlock() instanceof BlockAir && mc.world.getBlockState(blockPos.up().up()).getBlock() instanceof BlockAir) {
-					closestBlockPosDistance = mc.player.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+			for (BlockPos blockPos : BlockPos.getAllInBox(new BlockPos(WWESAuto32k.mc.player.posX - 3, WWESAuto32k.mc.player.posY - 1, WWESAuto32k.mc.player.posZ - 3), new BlockPos(WWESAuto32k.mc.player.posX + 3, WWESAuto32k.mc.player.posY + 2, WWESAuto32k.mc.player.posZ + 3))) {
+				if (WWESAuto32k.mc.player.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ()) < closestBlockPosDistance && WWESAuto32k.mc.world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(blockPos.add(0, 1, 0)), predicate).isEmpty() && !(WWESAuto32k.mc.world.getBlockState(blockPos.down()).getBlock() instanceof BlockAir) && WWESAuto32k.mc.world.getBlockState(blockPos).getBlock() instanceof BlockAir && WWESAuto32k.mc.world.getBlockState(blockPos.up()).getBlock() instanceof BlockAir && WWESAuto32k.mc.world.getBlockState(blockPos.up().up()).getBlock() instanceof BlockAir) {
+					closestBlockPosDistance = WWESAuto32k.mc.player.getDistance(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 					closestBlockPos = blockPos;
 				}
 			}
@@ -132,20 +136,20 @@ public class Auto32kModule {
 			this.shouldKillaura = true;
 
 			//wow this was a fricking pain to figure out
-			if (mc.player.inventory.currentItem != enchantedSwordIndex) {
-				mc.player.connection.sendPacket(new CPacketHeldItemChange(enchantedSwordIndex));
-				mc.player.inventory.currentItem = enchantedSwordIndex;
-				mc.playerController.updateController();
+			if (WWESAuto32k.mc.player.inventory.currentItem != enchantedSwordIndex) {
+				WWESAuto32k.mc.player.connection.sendPacket(new CPacketHeldItemChange(enchantedSwordIndex));
+				WWESAuto32k.mc.player.inventory.currentItem = enchantedSwordIndex;
+				WWESAuto32k.mc.playerController.updateController();
 			}
 
 		} else {
 			this.shouldKillaura = false;
 		}
 
-		if (enchantedSwordIndex == -1 && mc.player.openContainer != null && mc.player.openContainer instanceof ContainerHopper && mc.player.openContainer.inventorySlots != null && !mc.player.openContainer.inventorySlots.isEmpty()) {
+		if (enchantedSwordIndex == -1 && WWESAuto32k.mc.player.openContainer != null && WWESAuto32k.mc.player.openContainer instanceof ContainerHopper && WWESAuto32k.mc.player.openContainer.inventorySlots != null && !WWESAuto32k.mc.player.openContainer.inventorySlots.isEmpty()) {
 			//this is very weird.. but i dont have to get the hopperInventory from GuiHopper
 			for (int i = 0; i < 5; i++) {
-				if (mc.player.openContainer.inventorySlots.get(0).inventory.getStackInSlot(i).getItem().equals(Items.DIAMOND_SWORD) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, mc.player.openContainer.inventorySlots.get(0).inventory.getStackInSlot(i)) >= Short.MAX_VALUE) {
+				if (WWESAuto32k.mc.player.openContainer.inventorySlots.get(0).inventory.getStackInSlot(i).getItem().equals(Items.DIAMOND_SWORD) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, WWESAuto32k.mc.player.openContainer.inventorySlots.get(0).inventory.getStackInSlot(i)) >= Short.MAX_VALUE) {
 					enchantedSwordIndex = i;
 					break;
 				}
@@ -155,36 +159,36 @@ public class Auto32kModule {
 				return;
 			}
 
-			if (mc.player.inventory.mainInventory.get(mc.player.inventory.currentItem).getItem() instanceof ItemAir) {
+			if (WWESAuto32k.mc.player.inventory.mainInventory.get(WWESAuto32k.mc.player.inventory.currentItem).getItem() instanceof ItemAir) {
 				for (int i = 0; i < 9; i++) {
-					ItemStack itemStack = mc.player.inventory.mainInventory.get(i);
+					ItemStack itemStack = WWESAuto32k.mc.player.inventory.mainInventory.get(i);
 					if (itemStack.getItem() instanceof ItemAir) {
-						if (mc.player.inventory.currentItem != i) {
-							mc.player.connection.sendPacket(new CPacketHeldItemChange(i));
-							mc.player.inventory.currentItem = i;
-							mc.playerController.updateController();
+						if (WWESAuto32k.mc.player.inventory.currentItem != i) {
+							WWESAuto32k.mc.player.connection.sendPacket(new CPacketHeldItemChange(i));
+							WWESAuto32k.mc.player.inventory.currentItem = i;
+							WWESAuto32k.mc.playerController.updateController();
 						}
 						break;
 					}
 				}
 			}
 
-			mc.playerController.windowClick(mc.player.openContainer.windowId, enchantedSwordIndex, mc.player.inventory.currentItem, ClickType.SWAP, mc.player);
+			WWESAuto32k.mc.playerController.windowClick(WWESAuto32k.mc.player.openContainer.windowId, enchantedSwordIndex, WWESAuto32k.mc.player.inventory.currentItem, ClickType.SWAP, WWESAuto32k.mc.player);
 
 		}
 
-		if (this.shouldKillaura) {
+		if (this.shouldKillaura && WWESAuto32k.isKillauraOptionEnabled) {
 
 			double closestEntityDistance = 8;//range
 
-			for (Entity entity : mc.world.loadedEntityList) {
+			for (Entity entity : WWESAuto32k.mc.world.loadedEntityList) {
 				if (!(entity instanceof EntityPlayer) || entity instanceof EntityPlayerSP || entity.isDead) {
 					continue;
 				}
 
-				if (mc.player.getDistance(entity) < closestEntityDistance && ((EntityPlayer) entity).getHealth() > 0/* this doesnt seem to do anything */) {
+				if (WWESAuto32k.mc.player.getDistance(entity) < closestEntityDistance && ((EntityPlayer) entity).getHealth() > 0/*this doesnt seem to do anything */) {
 					this.entityPlayer = (EntityPlayer) entity;
-					closestEntityDistance = mc.player.getDistance(entity);
+					closestEntityDistance = WWESAuto32k.mc.player.getDistance(entity);
 				}
 
 			}
@@ -195,8 +199,8 @@ public class Auto32kModule {
 
 				if (this.cpsTick >= (20 / (WWESAuto32k.cps))) {
 
-					mc.playerController.attackEntity(mc.player, this.entityPlayer);
-					mc.player.swingArm(EnumHand.MAIN_HAND);
+					WWESAuto32k.mc.playerController.attackEntity(WWESAuto32k.mc.player, this.entityPlayer);
+					WWESAuto32k.mc.player.swingArm(EnumHand.MAIN_HAND);
 					this.cpsTick = 0;
 				}
 			}
@@ -205,34 +209,34 @@ public class Auto32kModule {
 	}
 
 	public void placeStuff(int hopperIndex, int shulkerIndex, BlockPos blockPos, EnumFacing enumFacing, Vec3d vec3d) {
-		mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.START_SNEAKING));
+		WWESAuto32k.mc.player.connection.sendPacket(new CPacketEntityAction(WWESAuto32k.mc.player, CPacketEntityAction.Action.START_SNEAKING));
 
 		//place hopper
-		if (mc.world.getBlockState(blockPos.up()).getBlock() instanceof BlockAir) {//shouldent happen
-			mc.player.connection.sendPacket(new CPacketHeldItemChange(hopperIndex));
-			mc.player.inventory.currentItem = hopperIndex;
-			mc.playerController.updateController();
-			mc.playerController.processRightClickBlock(mc.player, mc.world, blockPos, enumFacing, vec3d, EnumHand.MAIN_HAND);
-			mc.player.swingArm(EnumHand.MAIN_HAND);
+		if (WWESAuto32k.mc.world.getBlockState(blockPos.up()).getBlock() instanceof BlockAir) {//shouldent happen
+			WWESAuto32k.mc.player.connection.sendPacket(new CPacketHeldItemChange(hopperIndex));
+			WWESAuto32k.mc.player.inventory.currentItem = hopperIndex;
+			WWESAuto32k.mc.playerController.updateController();
+			WWESAuto32k.mc.playerController.processRightClickBlock(WWESAuto32k.mc.player, WWESAuto32k.mc.world, blockPos, enumFacing, vec3d, EnumHand.MAIN_HAND);
+			WWESAuto32k.mc.player.swingArm(EnumHand.MAIN_HAND);
 		}
 		this.placedHopperPos = blockPos.up();
 
 		boolean placedShulker = false;
 
 		//place shulker
-		if (mc.world.getBlockState(this.placedHopperPos).getBlock().equals(Blocks.HOPPER) && mc.world.getBlockState(this.placedHopperPos.up()).getBlock() instanceof BlockAir) {
-			mc.player.connection.sendPacket(new CPacketHeldItemChange(shulkerIndex));
-			mc.player.inventory.currentItem = shulkerIndex;
-			mc.playerController.updateController();
-			mc.playerController.processRightClickBlock(mc.player, mc.world, this.placedHopperPos, EnumFacing.UP/* we are placing on the top? */, new Vec3d(this.placedHopperPos.getX(), this.placedHopperPos.getY(), this.placedHopperPos.getZ()), EnumHand.MAIN_HAND);
-			mc.player.swingArm(EnumHand.MAIN_HAND);
+		if (WWESAuto32k.mc.world.getBlockState(this.placedHopperPos).getBlock().equals(Blocks.HOPPER) && WWESAuto32k.mc.world.getBlockState(this.placedHopperPos.up()).getBlock() instanceof BlockAir) {
+			WWESAuto32k.mc.player.connection.sendPacket(new CPacketHeldItemChange(shulkerIndex));
+			WWESAuto32k.mc.player.inventory.currentItem = shulkerIndex;
+			WWESAuto32k.mc.playerController.updateController();
+			WWESAuto32k.mc.playerController.processRightClickBlock(WWESAuto32k.mc.player, WWESAuto32k.mc.world, this.placedHopperPos, EnumFacing.UP/* we are placing on the top? */, new Vec3d(this.placedHopperPos.getX(), this.placedHopperPos.getY(), this.placedHopperPos.getZ()), EnumHand.MAIN_HAND);
+			WWESAuto32k.mc.player.swingArm(EnumHand.MAIN_HAND);
 			placedShulker = true;
 		}
-		mc.player.connection.sendPacket(new CPacketEntityAction(mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
+		WWESAuto32k.mc.player.connection.sendPacket(new CPacketEntityAction(WWESAuto32k.mc.player, CPacketEntityAction.Action.STOP_SNEAKING));
 
 		if (placedShulker) {
 			//open hopper
-			mc.playerController.processRightClickBlock(mc.player, mc.world, this.placedHopperPos, enumFacing/* .... */, new Vec3d(this.placedHopperPos.getX(), this.placedHopperPos.getY(), this.placedHopperPos.getZ()), EnumHand.MAIN_HAND);
+			WWESAuto32k.mc.playerController.processRightClickBlock(WWESAuto32k.mc.player, WWESAuto32k.mc.world, this.placedHopperPos, enumFacing/*....*/, new Vec3d(this.placedHopperPos.getX(), this.placedHopperPos.getY(), this.placedHopperPos.getZ()), EnumHand.MAIN_HAND);
 		}
 		this.hasPlacedStuff = true;
 	}
